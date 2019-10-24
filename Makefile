@@ -113,6 +113,9 @@ test-all: build
 	@# AppStateDeterminism does not use Seed flag
 	@go test ./app -run TestAppStateDeterminism      -Enabled -Commit -NumBlocks=100 -BlockSize=200         -v -timeout 24h
 
+	# Check documentation url links are live. This tool scrapes all html and markdown files in the directory for links and checks they're live.
+	@go run github.com/raviqqe/liche -r .
+
 test:
 	@go test ./...
 

@@ -4,4 +4,4 @@
 - CLI documentation can be accessed with the `--help` flag
 <!-- - Rest Server API Documentation -->
 - Module Specs
-  - [validatorvesting](../x/validatorvesting/spec)
+  - [validator-vesting](../../x/validator-vesting/spec)

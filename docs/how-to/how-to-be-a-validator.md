@@ -1,6 +1,6 @@
 # How To Run A Validator
 
-Start by reading the [validator overview](overviews/what-are-validators.md).
+Start by reading the [validator overview](../overviews/what-are-validators.md).
 
 >Note: This guide covers the bare minimum needed to get a validator up and running. To operate a validator professionally it is recommended that you consult the cosmos docs on secure private keys storage, sentry node architectures, slashing risks, etc.
 
