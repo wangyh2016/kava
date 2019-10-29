@@ -16,7 +16,7 @@ Setup a cloud Ubuntu server with an externally accessible IP.
 2) clone the repo
 3) run `make install`
 
-This will install `kvd` and `kvcli` into `$GOPATH/bin` (`normally ~/go/bin`). Add this to your `$PATH` for convenience.
+This will install `kvd` and `kvcli` into `$GOPATH/bin` (normally `~/go/bin`). Add this to your `$PATH` for convenience.
 
 ## 3) Setup
 
