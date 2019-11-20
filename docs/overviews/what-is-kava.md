@@ -1,4 +1,4 @@
-# What Is Kava
+# What is Kava
 
 Kava is a blockchain for cross-chain DeFi, built with the power of the Cosmos SDK.
 

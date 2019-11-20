@@ -1,0 +1,11 @@
+/* Add custom styles in this file. */
+
+/* Change the color of the inline code cells to avoid clash with kava purple. */
+.markdown-section code {
+    color: #FF574F;
+}
+
+/* Reduce the size of the logo image in the sidebar. */
+.app-name img {
+    max-width: 40%;
+}
