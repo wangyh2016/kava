@@ -2,7 +2,7 @@ package types
 
 // GenesisState is the state that must be provided at genesis.
 type GenesisState struct {
-	Params LiquidatorParams `json:"liquidator_params" yaml:"liquidator_params"`
+	Params Params `json:"params" yaml:"params"`
 }
 
 // DefaultGenesisState returns a default genesis state
@@ -13,9 +13,9 @@ func DefaultGenesisState() GenesisState {
 	}
 }
 
-// ValidateGenesis performs basic validation of genesis data returning an error for any failed validation criteria.
-func ValidateGenesis(data GenesisState) error {
-	if err := data.Params.Validate(); err != nil {
+// ValidateGenesis performs basic validation of genesis gs returning an error for any failed validation criteria.
+func ValidateGenesis(gs GenesisState) error {
+	if err := gs.Params.Validate(); err != nil {
 		return err
 	}
 	return nil

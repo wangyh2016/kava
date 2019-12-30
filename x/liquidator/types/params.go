@@ -13,23 +13,23 @@ var (
 	KeyCollateralParams = []byte("CollateralParams")
 )
 
-// LiquidatorParams store params for the liquidator module
-type LiquidatorParams struct {
+// Params store params for the liquidator module
+type Params struct {
 	DebtAuctionSize sdk.Int
 	//SurplusAuctionSize sdk.Int
-	CollateralParams []CollateralParams
+	CollateralParams CollateralParams
 }
 
-// NewLiquidatorParams returns a new params object for the liquidator module
-func NewLiquidatorParams(debtAuctionSize sdk.Int, collateralParams []CollateralParams) LiquidatorParams {
-	return LiquidatorParams{
+// NewParams returns a new params object for the liquidator module
+func NewParams(debtAuctionSize sdk.Int, collateralParams CollateralParams) Params {
+	return Params{
 		DebtAuctionSize:  debtAuctionSize,
 		CollateralParams: collateralParams,
 	}
 }
 
 // String implements fmt.Stringer
-func (p LiquidatorParams) String() string {
+func (p Params) String() string {
 	out := fmt.Sprintf(`Params:
 		Debt Auction Size: %s
 		Collateral Params: `,
@@ -42,29 +42,42 @@ func (p LiquidatorParams) String() string {
 	return out
 }
 
-// CollateralParams params storing information about each collateral for the liquidator module
-type CollateralParams struct {
-	Denom       string  // Coin name of collateral type
-	AuctionSize sdk.Int // Max amount of collateral to sell off in any one auction. Known as lump in Maker.
-	// LiquidationPenalty
+// CollateralParam params storing information about each collateral for the liquidator module
+type CollateralParam struct {
+	Denom              string  // Coin name of collateral type
+	AuctionSize        sdk.Int // Max amount of collateral to sell off in any one auction. Known as lump in Maker.
+	LiquidationPenalty sdk.Dec
 }
 
 // String implements stringer interface
-func (cp CollateralParams) String() string {
+func (cp CollateralParam) String() string {
 	return fmt.Sprintf(`
   Denom:        %s
-  AuctionSize: %s`, cp.Denom, cp.AuctionSize)
+	AuctionSize: %s
+	Liquidation Penalty: %s`, cp.Denom, cp.AuctionSize, cp.LiquidationPenalty)
+}
+
+// CollateralParams array of CollateralParam
+type CollateralParams []CollateralParam
+
+// String implements fmt.Stringer
+func (cps CollateralParams) String() string {
+	out := "Collateral Params\n"
+	for _, cp := range cps {
+		out += fmt.Sprintf("%s\n", cp)
+	}
+	return out
 }
 
 // ParamKeyTable for the liquidator module
 func ParamKeyTable() subspace.KeyTable {
-	return subspace.NewKeyTable().RegisterParamSet(&LiquidatorParams{})
+	return subspace.NewKeyTable().RegisterParamSet(&Params{})
 }
 
 // ParamSetPairs implements the ParamSet interface and returns all the key/value pairs
 // pairs of liquidator module's parameters.
 // nolint
-func (p *LiquidatorParams) ParamSetPairs() subspace.ParamSetPairs {
+func (p *Params) ParamSetPairs() subspace.ParamSetPairs {
 	return subspace.ParamSetPairs{
 		subspace.NewParamSetPair(KeyDebtAuctionSize, &p.DebtAuctionSize),
 		subspace.NewParamSetPair(KeyCollateralParams, &p.CollateralParams),
@@ -72,14 +85,15 @@ func (p *LiquidatorParams) ParamSetPairs() subspace.ParamSetPairs {
 }
 
 // DefaultParams for the liquidator module
-func DefaultParams() LiquidatorParams {
-	return LiquidatorParams{
+func DefaultParams() Params {
+	return Params{
 		DebtAuctionSize:  sdk.NewInt(1000),
-		CollateralParams: []CollateralParams{},
+		CollateralParams: CollateralParams{},
 	}
 }
 
-func (p LiquidatorParams) Validate() error {
+// Validate checks that the parameters have valid values.
+func (p Params) Validate() error {
 	if p.DebtAuctionSize.IsNegative() {
 		return fmt.Errorf("debt auction size should be positive, is %s", p.DebtAuctionSize)
 	}
@@ -94,6 +108,10 @@ func (p LiquidatorParams) Validate() error {
 			return fmt.Errorf(
 				"auction size for each collateral should be positive, is %s for %s", cp.AuctionSize, cp.Denom,
 			)
+		}
+		if cp.LiquidationPenalty.LT(sdk.ZeroDec()) || cp.LiquidationPenalty.GT(sdk.OneDec()) {
+			return fmt.Errorf(
+				"liquidation penalty should be between 0 and 1, is %s", cp.LiquidationPenalty)
 		}
 	}
 	return nil
