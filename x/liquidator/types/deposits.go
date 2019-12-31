@@ -5,17 +5,13 @@ import (
 	cdptypes "github.com/kava-labs/kava/x/cdp/types"
 )
 
-type Deposit struct {
-	Depositor sdk.AccAddress
-	Weight    sdk.Dec
-}
-type Deposits []Deposit
-
+// PartialDeposit stores deposits that are pending being sent to auction
 type PartialDeposit struct {
 	cdptypes.Deposit
 	DebtAmount sdk.Int `json:"debt_amount" yaml:"debt_amount"`
 }
 
+// PartialDeposits array of PartialDeposit
 type PartialDeposits []PartialDeposit
 
 // SumDeposits returns the sum of all deposits in the input collection
@@ -38,6 +34,7 @@ func SumPartialDeposits(pd PartialDeposits) sdk.Int {
 	return total
 }
 
+// SumCoins returns the sum of all amounts for the input coins
 func SumCoins(cs sdk.Coins) sdk.Int {
 	total := sdk.ZeroInt()
 	for _, c := range cs {
@@ -46,6 +43,7 @@ func SumCoins(cs sdk.Coins) sdk.Int {
 	return total
 }
 
+// SumDebt returns the sum of all debt amounts for the input partial deposits
 func SumDebt(pds PartialDeposits) sdk.Int {
 	total := sdk.ZeroInt()
 	for _, pd := range pds {
@@ -57,21 +55,4 @@ func SumDebt(pds PartialDeposits) sdk.Int {
 // CalculateRatableDebtShare calculates the ratable distribution of the debt based on the partial deposit amount.
 func CalculateRatableDebtShare(depositAmount, totalDepositAmount, debtAmount sdk.Int) sdk.Int {
 	return getShareWithFloatRounded(sdk.NewUintFromBigInt(depositAmount.BigInt()), sdk.NewUintFromBigInt(totalDepositAmount.BigInt()), sdk.NewUintFromBigInt((debtAmount.BigInt())))
-}
-
-func ConvertDepositsToWeights(pds PartialDeposits) Deposits {
-	// total amount of collateral being sent to auction
-	totalAuctionDeposits := SumPartialDeposits(pds)
-	weights := Deposits{}
-	totalWeight := sdk.ZeroDec()
-	for i, pd := range pds {
-		collateralPercentage := CalculateSharesPercentage(pd.Amount[0].Amount, totalAuctionDeposits)
-		totalWeight = totalWeight.Add(collateralPercentage)
-		weights[i] = Deposit{pd.Depositor, collateralPercentage}
-	}
-	if !totalWeight.Equal(sdk.OneDec()) {
-		error := sdk.OneDec().Sub(totalWeight)
-		weights[0].Weight = weights[0].Weight.Add(error)
-	}
-	return weights
 }

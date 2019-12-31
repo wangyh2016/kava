@@ -37,7 +37,8 @@ func (k Keeper) SendCollateralToAuction(ctx sdk.Context, deposits []cdptypes.Dep
 				if len(otherDeposits) > 1 {
 					debtCoveredByDeposit = types.CalculateRatableDebtShare(dep.Amount[0].Amount, types.SumDeposits(otherDeposits), debtCoveredByDeposit)
 				}
-				// if this deposit contains more than a lot, start auctions with it until there is less than a lot remaining
+				// if this deposit contains more than a lot, start auctions with it
+				// until there is less than a lot remaining
 				k.CreateAuctionsFromDeposit(ctx, &dep, &debtCoveredByDeposit, cp.AuctionSize, cdpFromDeposit.Principal[0].Denom)
 				// the deposit at this point contains zero collateral or collateral less than one lot
 				if !dep.Amount[0].Amount.IsZero() {
@@ -102,15 +103,11 @@ func (k Keeper) CreateAuctionsFromDeposit(ctx sdk.Context, dep *cdptypes.Deposit
 		depositDebtAmount := (auctionSize.Quo(dep.Amount[0].Amount)).Mul(*debt)
 		// subtract one lot's worth of debt from the total debt covered by this deposit
 		*debt = debt.Sub(depositDebtAmount)
-		auctionWeight := types.Deposits{types.Deposit{
-			Depositor: dep.Depositor,
-			Weight:    sdk.OneDec(),
-		}}
 		// start an auction for one lot, attempting to raise depositDebtAmount
 		auctionID, err := k.auctionKeeper.StartForwardReverseAuction(
 			ctx, types.ModuleName, sdk.NewCoin(dep.Amount[0].Denom, auctionSize),
-			sdk.NewCoin(principalDenom, depositDebtAmount), auctionWeight,
-		)
+			sdk.NewCoin(principalDenom, depositDebtAmount), []sdk.AccAddress{dep.Depositor},
+			[]sdk.Int{depositDebtAmount})
 		if err != nil {
 			panic(err)
 		}
@@ -131,10 +128,15 @@ func (k Keeper) CreateAuctionFromPartialDeposits(ctx sdk.Context, dep *cdptypes.
 		*partialDeps = append(*partialDeps, types.PartialDeposit{depositToAdd, debtToAdd})
 		dep.Amount[0].Amount = dep.Amount[0].Amount.Sub(collateralToAdd)
 	}
-	auctionWeights := types.ConvertDepositsToWeights(*partialDeps)
+	depositors := []sdk.AccAddress{}
+	deposits := []sdk.Int{}
+	for _, dep := range *partialDeps {
+		depositors = append(depositors, dep.Depositor)
+		deposits = append(deposits, dep.DebtAmount)
+	}
 	auctionID, err := k.auctionKeeper.StartForwardReverseAuction(
 		ctx, types.ModuleName, sdk.NewCoin(collateralDenom, auctionSize),
-		sdk.NewCoin(principalDenom, types.SumDebt(*partialDeps)), auctionWeights)
+		sdk.NewCoin(principalDenom, types.SumDebt(*partialDeps)), depositors, deposits)
 	if err != nil {
 		panic(err)
 	}

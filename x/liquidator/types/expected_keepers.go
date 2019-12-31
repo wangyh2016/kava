@@ -37,5 +37,5 @@ type SupplyKeeper interface {
 type AuctionKeeper interface {
 	StartForwardAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (auction.ID, sdk.Error)
 	StartReverseAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (auction.ID, sdk.Error)
-	StartForwardReverseAuction(ctx sdk.Context, sellerModule string, lot sdk.Coin, maxBid sdk.Coin, deposits Deposits) (auction.ID, sdk.Error)
+	StartForwardReverseAuction(ctx sdk.Context, seller string, lot sdk.Coin, maxBid sdk.Coin, lotReturnAddrs []sdk.AccAddress, lotReturnWeights []sdk.Int) (auction.ID, sdk.Error)
 }
