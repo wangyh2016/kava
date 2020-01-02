@@ -54,10 +54,8 @@ func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router
 	rest.RegisterRoutes(ctx, rtr)
 }
 
-// GetTxCmd returns the root tx command for the liquidator module.
-func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetTxCmd(cdc)
-}
+// GetTxCmd returns no root tx command for the liquidator module.
+func (AppModuleBasic) GetTxCmd(_ *codec.Codec) *cobra.Command { return nil }
 
 // GetQueryCmd returns the root query command for the auction module.
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
@@ -91,10 +89,8 @@ func (AppModule) Route() string {
 	return ModuleName
 }
 
-// NewHandler module handler
-func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
-}
+// NewHandler no module handler
+func (am AppModule) NewHandler() sdk.Handler { return nil }
 
 // QuerierRoute module querier route name
 func (AppModule) QuerierRoute() string {

@@ -5,7 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/auction"
 	cdptypes "github.com/kava-labs/kava/x/cdp/types"
 	"github.com/kava-labs/kava/x/liquidator/types"
 )
@@ -159,9 +158,25 @@ func (k Keeper) RemovePartialDeposit(ctx sdk.Context, partialDep types.PartialDe
 }
 
 // SetAuctionDeposit stores the amount of collateral at auction for a particular auction
-func (k Keeper) SetAuctionDeposit(ctx sdk.Context, auctionID auction.ID, auctionDeposit sdk.Coin) {
+func (k Keeper) SetAuctionDeposit(ctx sdk.Context, auctionID uint64, auctionDeposit sdk.Coin) {
 	store := prefix.NewStore(ctx.KVStore(k.key), types.CollateralAuctionKeyPrefix)
 	store.Set(types.GetAuctionIDBytes(uint64(auctionID)), k.cdc.MustMarshalBinaryLengthPrefixed(auctionDeposit))
+}
+
+// GetCollateralDeposits iterates over auction deposits and returns the deposit and auction ID
+func (k Keeper) GetCollateralDeposits(ctx sdk.Context) (deposits types.CollateralDeposits) {
+
+	store := prefix.NewStore(ctx.KVStore(k.key), types.CollateralAuctionKeyPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		auctionID := types.GetAuctionIDFromBytes(iterator.Key())
+		var dep sdk.Coin
+		k.cdc.MustUnmarshalBinaryLengthPrefixed(iterator.Value(), &dep)
+		cd := types.CollateralDeposit{AuctionID: auctionID, Deposit: dep}
+		deposits = append(deposits, cd)
+	}
+	return
 }
 
 // IncrementTotalAuctionDeposits increments the total amount of collateral at auction for a particular collateral type
@@ -176,5 +191,18 @@ func (k Keeper) IncrementTotalAuctionDeposits(ctx sdk.Context, auctionDeposit sd
 	k.cdc.MustUnmarshalBinaryLengthPrefixed(bz, &previousTotal)
 	previousTotal = previousTotal.Add(auctionDeposit)
 	store.Set([]byte(auctionDeposit.Denom), k.cdc.MustMarshalBinaryLengthPrefixed(auctionDeposit))
+	return
+}
+
+// GetTotalAuctionCollateral returns the total collateral at auction for each collateral type
+func (k Keeper) GetTotalAuctionCollateral(ctx sdk.Context) (collateral sdk.Coins) {
+	store := prefix.NewStore(ctx.KVStore(k.key), types.TotalCollateralPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		var col sdk.Coin
+		k.cdc.MustUnmarshalBinaryLengthPrefixed(iterator.Value(), &col)
+		collateral = append(collateral, col)
+	}
 	return
 }

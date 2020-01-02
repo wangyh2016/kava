@@ -1,15 +1,30 @@
 package types
 
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
 // GenesisState is the state that must be provided at genesis.
 type GenesisState struct {
-	Params Params `json:"params" yaml:"params"`
+	Params             Params             `json:"params" yaml:"params"`
+	CollateralDeposits CollateralDeposits `json:"collateral_deposits" yaml:"collateral_deposits"`
+	AuctionCollateral  sdk.Coins          `json:"auction_collateral" yaml:"auction_collateral"`
 }
+
+type CollateralDeposit struct {
+	Deposit   sdk.Coin
+	AuctionID uint64
+}
+
+type CollateralDeposits []CollateralDeposit
 
 // DefaultGenesisState returns a default genesis state
 // TODO pick better values
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
-		DefaultParams(),
+		Params:             DefaultParams(),
+		CollateralDeposits: CollateralDeposits{},
+		AuctionCollateral:  sdk.Coins{},
 	}
 }
 

@@ -21,32 +21,39 @@ const (
 
 var (
 	// functions aliases
-	RegisterCodec       = types.RegisterCodec
-	DefaultGenesisState = types.DefaultGenesisState
-	ValidateGenesis     = types.ValidateGenesis
-	NewLiquidatorParams = types.NewLiquidatorParams
-	ParamKeyTable       = types.ParamKeyTable
-	DefaultParams       = types.DefaultParams
-	NewKeeper           = keeper.NewKeeper
-	NewQuerier          = keeper.NewQuerier
+	RegisterCodec             = types.RegisterCodec
+	SumDeposits               = types.SumDeposits
+	SumPartialDeposits        = types.SumPartialDeposits
+	SumCoins                  = types.SumCoins
+	SumDebt                   = types.SumDebt
+	CalculateRatableDebtShare = types.CalculateRatableDebtShare
+	DefaultGenesisState       = types.DefaultGenesisState
+	ValidateGenesis           = types.ValidateGenesis
+	GetAuctionIDBytes         = types.GetAuctionIDBytes
+	GetAuctionIDFromBytes     = types.GetAuctionIDFromBytes
+	NewParams                 = types.NewParams
+	ParamKeyTable             = types.ParamKeyTable
+	DefaultParams             = types.DefaultParams
+	CalculateSharesPercentage = types.CalculateSharesPercentage
+	NewKeeper                 = keeper.NewKeeper
+	NewQuerier                = keeper.NewQuerier
 
 	// variable aliases
-	ModuleCdc           = types.ModuleCdc
-	KeyDebtAuctionSize  = types.KeyDebtAuctionSize
-	KeyCollateralParams = types.KeyCollateralParams
+	ModuleCdc                  = types.ModuleCdc
+	CollateralAuctionKeyPrefix = types.CollateralAuctionKeyPrefix
+	TotalCollateralPrefix      = types.TotalCollateralPrefix
+	KeyDebtAuctionSize         = types.KeyDebtAuctionSize
+	KeyCollateralParams        = types.KeyCollateralParams
 )
 
 type (
-	CdpKeeper                             = types.CdpKeeper
-	BankKeeper                            = types.BankKeeper
-	AuctionKeeper                         = types.AuctionKeeper
-	GenesisState                          = types.GenesisState
-	MsgSeizeAndStartCollateralAuction     = types.MsgSeizeAndStartCollateralAuction
-	MsgStartDebtAuction                   = types.MsgStartDebtAuction
-	LiquidatorParams                      = types.LiquidatorParams
-	CollateralParams                      = types.CollateralParams
-	SeizeAndStartCollateralAuctionRequest = types.SeizeAndStartCollateralAuctionRequest
-	StartDebtAuctionRequest               = types.StartDebtAuctionRequest
-	SeizedDebt                            = types.SeizedDebt
-	Keeper                                = keeper.Keeper
+	PartialDeposit     = types.PartialDeposit
+	PartialDeposits    = types.PartialDeposits
+	GenesisState       = types.GenesisState
+	CollateralDeposit  = types.CollateralDeposit
+	CollateralDeposits = types.CollateralDeposits
+	Params             = types.Params
+	CollateralParam    = types.CollateralParam
+	CollateralParams   = types.CollateralParams
+	Keeper             = keeper.Keeper
 )

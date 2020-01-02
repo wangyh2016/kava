@@ -5,15 +5,26 @@ import (
 )
 
 // InitGenesis sets the genesis state in the keeper.
-func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) {
+func InitGenesis(ctx sdk.Context, k Keeper, gs GenesisState) {
 
-	keeper.SetParams(ctx, data.Params)
+	k.SetParams(ctx, gs.Params)
+	for _, ac := range gs.AuctionCollateral {
+		k.IncrementTotalAuctionDeposits(ctx, ac)
+	}
+	for _, cd := range gs.CollateralDeposits {
+		k.SetAuctionDeposit(ctx, cd.AuctionID, cd.Deposit)
+	}
 }
 
 // ExportGenesis returns a GenesisState for a given context and keeper.
-func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
-	params := keeper.GetParams(ctx)
+func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
+	params := k.GetParams(ctx)
+	auctionCollateralDeposits := k.GetCollateralDeposits(ctx)
+	totalAuctionCollateral := k.GetTotalAuctionCollateral(ctx)
+
 	return GenesisState{
-		Params: params,
+		Params:             params,
+		CollateralDeposits: auctionCollateralDeposits,
+		AuctionCollateral:  totalAuctionCollateral,
 	}
 }

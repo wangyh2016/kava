@@ -3,7 +3,6 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	supplyexported "github.com/cosmos/cosmos-sdk/x/supply/exported"
-	"github.com/kava-labs/kava/x/auction"
 	cdptypes "github.com/kava-labs/kava/x/cdp/types"
 )
 
@@ -16,6 +15,7 @@ type CdpKeeper interface {
 	GetDeposits(ctx sdk.Context, cdpID uint64) (deposits cdptypes.Deposits)
 	DeleteDeposit(ctx sdk.Context, status cdptypes.DepositStatus, cdpID uint64, depositor sdk.AccAddress)
 	GetAllLiquidatedDeposits(ctx sdk.Context)
+	GetDebtDenom(ctx sdk.Context) (denom string)
 }
 
 // SupplyKeeper defines the expected supply keeper for module accounts (noalias)
@@ -35,7 +35,7 @@ type SupplyKeeper interface {
 
 // AuctionKeeper expected interface for the auction keeper (noalias)
 type AuctionKeeper interface {
-	StartForwardAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (auction.ID, sdk.Error)
-	StartReverseAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (auction.ID, sdk.Error)
-	StartForwardReverseAuction(ctx sdk.Context, seller string, lot sdk.Coin, maxBid sdk.Coin, lotReturnAddrs []sdk.AccAddress, lotReturnWeights []sdk.Int) (auction.ID, sdk.Error)
+	StartForwardAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (uint64, sdk.Error)
+	StartReverseAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (uint64, sdk.Error)
+	StartForwardReverseAuction(ctx sdk.Context, seller string, lot sdk.Coin, maxBid sdk.Coin, lotReturnAddrs []sdk.AccAddress, lotReturnWeights []sdk.Int) (uint64, sdk.Error)
 }

@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/kava-labs/kava/x/liquidator/types"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/kava-labs/kava/x/liquidator/types"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
