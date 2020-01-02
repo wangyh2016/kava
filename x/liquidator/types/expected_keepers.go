@@ -14,7 +14,7 @@ type CdpKeeper interface {
 	RemoveCdpOwnerIndex(ctx sdk.Context, cdp cdptypes.CDP)
 	GetDeposits(ctx sdk.Context, cdpID uint64) (deposits cdptypes.Deposits)
 	DeleteDeposit(ctx sdk.Context, status cdptypes.DepositStatus, cdpID uint64, depositor sdk.AccAddress)
-	GetAllLiquidatedDeposits(ctx sdk.Context)
+	GetAllLiquidatedDeposits(ctx sdk.Context) (deposits cdptypes.Deposits)
 	GetDebtDenom(ctx sdk.Context) (denom string)
 }
 
@@ -35,7 +35,7 @@ type SupplyKeeper interface {
 
 // AuctionKeeper expected interface for the auction keeper (noalias)
 type AuctionKeeper interface {
-	StartForwardAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (uint64, sdk.Error)
-	StartReverseAuction(sdk.Context, sdk.AccAddress, sdk.Coin, sdk.Coin) (uint64, sdk.Error)
+	StartForwardAuction(ctx sdk.Context, seller string, lot sdk.Coin, bidDenom string) (uint64, sdk.Error)
+	StartReverseAuction(ctx sdk.Context, buyer string, bid sdk.Coin, initialLot sdk.Coin) (uint64, sdk.Error)
 	StartForwardReverseAuction(ctx sdk.Context, seller string, lot sdk.Coin, maxBid sdk.Coin, lotReturnAddrs []sdk.AccAddress, lotReturnWeights []sdk.Int) (uint64, sdk.Error)
 }

@@ -17,6 +17,9 @@ const (
 
 	// DefaultParamspace default name for parameter store
 	DefaultParamspace = ModuleName
+
+	// DefaultCodespace default name for codespace
+	DefaultCodespace = ModuleName
 )
 
 var sep = []byte(":")

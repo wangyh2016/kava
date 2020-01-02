@@ -74,6 +74,9 @@ var (
 		staking.NotBondedPoolName:   {supply.Burner, supply.Staking},
 		gov.ModuleName:              {supply.Burner},
 		validatorvesting.ModuleName: {supply.Burner},
+		cdp.ModuleName:              {supply.Minter, supply.Burner},
+		auction.ModuleName:          nil,
+		liquidator.ModuleName:       {supply.Minter, supply.Burner},
 	}
 )
 
@@ -234,11 +237,12 @@ func NewApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 		keys[cdp.StoreKey],
 		cdpSubspace,
 		app.pricefeedKeeper,
-		app.bankKeeper)
+		app.supplyKeeper,
+		cdp.DefaultCodespace)
 	app.auctionKeeper = auction.NewKeeper(
 		app.cdc,
-		app.cdpKeeper, // CDP keeper standing in for bank
 		keys[auction.StoreKey],
+		app.supplyKeeper,
 		auctionSubspace)
 	app.liquidatorKeeper = liquidator.NewKeeper(
 		app.cdc,
@@ -246,7 +250,8 @@ func NewApp(logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 		liquidatorSubspace,
 		app.cdpKeeper,
 		app.auctionKeeper,
-		app.cdpKeeper) // CDP keeper standing in for bank
+		app.supplyKeeper,
+		liquidator.DefaultCodespace)
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks

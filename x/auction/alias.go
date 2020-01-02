@@ -16,15 +16,12 @@ const (
 	RouterKey                 = types.RouterKey
 	DefaultParamspace         = types.DefaultParamspace
 	DefaultMaxAuctionDuration = types.DefaultMaxAuctionDuration
-	DefaultMaxBidDuration     = types.DefaultMaxBidDuration
-	DefaultStartingAuctionID  = types.DefaultStartingAuctionID
+	DefaultBidDuration        = types.DefaultBidDuration
 	QueryGetAuction           = types.QueryGetAuction
 )
 
 var (
 	// functions aliases
-	NewIDFromString          = types.NewIDFromString
-	NewBaseAuction           = types.NewBaseAuction
 	NewForwardAuction        = types.NewForwardAuction
 	NewReverseAuction        = types.NewReverseAuction
 	NewForwardReverseAuction = types.NewForwardReverseAuction
@@ -43,20 +40,14 @@ var (
 	ModuleCdc             = types.ModuleCdc
 	KeyAuctionBidDuration = types.KeyAuctionBidDuration
 	KeyAuctionDuration    = types.KeyAuctionDuration
-	KeyAuctionStartingID  = types.KeyAuctionStartingID
 )
 
 type (
 	Auction               = types.Auction
 	BaseAuction           = types.BaseAuction
-	ID                    = types.ID
-	EndTime               = types.EndTime
-	BankInput             = types.BankInput
-	BankOutput            = types.BankOutput
 	ForwardAuction        = types.ForwardAuction
 	ReverseAuction        = types.ReverseAuction
 	ForwardReverseAuction = types.ForwardReverseAuction
-	BankKeeper            = types.BankKeeper
 	GenesisAuctions       = types.GenesisAuctions
 	GenesisState          = types.GenesisState
 	MsgPlaceBid           = types.MsgPlaceBid
