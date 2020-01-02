@@ -125,7 +125,7 @@ func (k Keeper) CreateAuctionsFromDeposit(ctx sdk.Context, dep *cdptypes.Deposit
 		auctionID, err := k.auctionKeeper.StartForwardReverseAuction(
 			ctx, types.ModuleName, sdk.NewCoin(dep.Amount[0].Denom, auctionSize),
 			sdk.NewCoin(principalDenom, depositDebtAmount), []sdk.AccAddress{dep.Depositor},
-			[]sdk.Int{depositDebtAmount})
+			[]sdk.Int{auctionSize})
 		if err != nil {
 			panic(err)
 		}
@@ -150,7 +150,7 @@ func (k Keeper) CreateAuctionFromPartialDeposits(ctx sdk.Context, dep *cdptypes.
 	deposits := []sdk.Int{}
 	for _, dep := range *partialDeps {
 		depositors = append(depositors, dep.Depositor)
-		deposits = append(deposits, dep.DebtAmount)
+		deposits = append(deposits, dep.Amount[0].Amount)
 	}
 	auctionID, err := k.auctionKeeper.StartForwardReverseAuction(
 		ctx, types.ModuleName, sdk.NewCoin(collateralDenom, auctionSize),

@@ -44,6 +44,7 @@ func (suite *AuctionTestSuite) SetupTest() {
 	suite.app = tApp
 	suite.ctx = ctx
 	suite.keeper = keeper
+	suite.addrs = addrs
 }
 
 func (suite *AuctionTestSuite) TestSendCollateralToAuction() {
@@ -59,6 +60,10 @@ func (suite *AuctionTestSuite) TestSendCollateralToAuction() {
 	fra, _ := ac.(auction.ForwardReverseAuction)
 	suite.Equal(c("usdx", 625000000), fra.MaxBid)
 	suite.Equal(c("xrp", 5000000000), fra.Lot)
+	suite.Equal(1, len(fra.LotReturns.Weights))
+	suite.Equal(fra.LotReturns.Addresses[0], suite.addrs[0])
+	suite.Equal(fra.LotReturns.Weights[0], i(5000000000))
+
 }
 
 func TestSeizeTestSuite(t *testing.T) {
