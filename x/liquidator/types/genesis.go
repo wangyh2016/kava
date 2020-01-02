@@ -11,11 +11,13 @@ type GenesisState struct {
 	AuctionCollateral  sdk.Coins          `json:"auction_collateral" yaml:"auction_collateral"`
 }
 
+// CollateralDeposit stores the auction ID and it's corresponding deposit
 type CollateralDeposit struct {
 	Deposit   sdk.Coin
 	AuctionID uint64
 }
 
+// CollateralDeposits array of CollateralDeposit
 type CollateralDeposits []CollateralDeposit
 
 // DefaultGenesisState returns a default genesis state

@@ -17,10 +17,29 @@ func (k Keeper) SendCollateralToAuction(ctx sdk.Context, deposits []cdptypes.Dep
 	cp, _ := k.GetCollateral(ctx, deposits[0].Amount[0].Denom)
 	partialAuctionDeposits := types.PartialDeposits{}
 
+	if types.SumDeposits(deposits).GT(sdk.ZeroInt()) && types.SumDeposits(deposits).LT(cp.AuctionSize) {
+		for _, dep := range deposits {
+			cdpFromDeposit, found := k.cdpKeeper.GetCDP(ctx, dep.Amount[0].Denom, dep.CdpID)
+			if !found {
+				panic(fmt.Sprintf("cdp not found for liquidated deposit: %s", dep))
+			}
+			pd := types.PartialDeposit{
+				Deposit:    dep,
+				DebtAmount: cdpFromDeposit.Principal[0].Amount,
+			}
+			partialAuctionDeposits = append(partialAuctionDeposits, pd)
+		}
+		cdpFromDeposit, _ := k.cdpKeeper.GetCdpByOwnerAndDenom(ctx, partialAuctionDeposits[0].Depositor, partialAuctionDeposits[0].Amount[0].Denom)
+		k.CreateAuctionFromPartialDeposits(ctx, &cdptypes.Deposit{}, &sdk.Int{}, &partialAuctionDeposits, types.SumPartialDeposits(partialAuctionDeposits), cp.Denom, cdpFromDeposit.Principal[0].Denom)
+		for _, pd := range partialAuctionDeposits {
+			k.RemovePartialDeposit(ctx, pd)
+		}
+		deposits = []cdptypes.Deposit{}
+	}
 	// while there is a positive amount of collateral left to auction
 	for types.SumDeposits(deposits).GT(sdk.ZeroInt()) {
 		// while there is at least one lot worth of collateral to auction
-		for types.SumDeposits(deposits).GT(cp.AuctionSize) {
+		for types.SumDeposits(deposits).GTE(cp.AuctionSize) {
 			for i, dep := range deposits {
 				// ensure the cdp corresponding to that deposit still exists
 				partialAuctionPending := false
