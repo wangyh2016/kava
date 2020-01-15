@@ -80,9 +80,9 @@ func (k Keeper) SetPrice(
 
 // SetCurrentPrices updates the price of an asset to the meadian of all valid oracle inputs
 func (k Keeper) SetCurrentPrices(ctx sdk.Context, marketID string) sdk.Error {
-	_, ok := k.GetMarket(ctx, marketID)
-	if !ok {
-		return types.ErrInvalidAsset(k.codespace)
+	_, err := k.GetMarket(ctx, marketID)
+	if err != nil {
+		return err
 	}
 	prices := k.GetRawPrices(ctx, marketID)
 	var notExpiredPrices []types.CurrentPrice
@@ -146,6 +146,10 @@ func (k Keeper) calculateMeanPrice(ctx sdk.Context, prices []types.CurrentPrice)
 
 // GetCurrentPrice fetches the current median price of all oracles for a specific asset
 func (k Keeper) GetCurrentPrice(ctx sdk.Context, marketID string) (types.CurrentPrice, sdk.Error) {
+	_, err := k.GetMarket(ctx, marketID)
+	if err != nil {
+		return types.CurrentPrice{}, err
+	}
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get([]byte(types.CurrentPricePrefix + marketID))
 

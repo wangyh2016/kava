@@ -51,14 +51,16 @@ func (k Keeper) GetOracle(ctx sdk.Context, marketID string, address sdk.AccAddre
 }
 
 // GetMarket returns the market if it is in the pricefeed system
-func (k Keeper) GetMarket(ctx sdk.Context, marketID string) (types.Market, bool) {
+func (k Keeper) GetMarket(ctx sdk.Context, marketID string) (types.Market, sdk.Error) {
 	markets := k.GetMarketParams(ctx)
 
 	for i := range markets {
 		if markets[i].MarketID == marketID {
-			return markets[i], true
+			if !markets[i].Active {
+				return types.Market{}, types.ErrInactiveAsset(k.Codespace(), marketID)
+			}
+			return markets[i], nil
 		}
 	}
-	return types.Market{}, false
-
+	return types.Market{}, types.ErrInvalidAsset(k.Codespace())
 }

@@ -28,9 +28,9 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 func queryCurrentPrice(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	marketID := path[0]
-	_, found := keeper.GetMarket(ctx, marketID)
-	if !found {
-		return []byte{}, sdk.ErrUnknownRequest("asset not found")
+	_, err = keeper.GetMarket(ctx, marketID)
+	if err != nil {
+		return []byte{}, err
 	}
 	currentPrice, err := keeper.GetCurrentPrice(ctx, marketID)
 	if err != nil {
@@ -47,9 +47,9 @@ func queryCurrentPrice(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 func queryRawPrices(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var priceList types.QueryRawPricesResp
 	marketID := path[0]
-	_, found := keeper.GetMarket(ctx, marketID)
-	if !found {
-		return []byte{}, sdk.ErrUnknownRequest("asset not found")
+	_, err = keeper.GetMarket(ctx, marketID)
+	if err != nil {
+		return []byte{}, err
 	}
 	rawPrices := keeper.GetRawPrices(ctx, marketID)
 	for _, price := range rawPrices {

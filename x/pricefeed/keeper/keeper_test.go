@@ -28,8 +28,8 @@ func TestKeeper_SetGetMarket(t *testing.T) {
 	require.Equal(t, len(markets), 1)
 	require.Equal(t, markets[0].MarketID, "tstusd")
 
-	_, found := keeper.GetMarket(ctx, "tstusd")
-	require.Equal(t, found, true)
+	_, err := keeper.GetMarket(ctx, "tstusd")
+	require.NoError(t, err)
 
 	mp = types.Params{
 		Markets: types.Markets{
@@ -43,8 +43,8 @@ func TestKeeper_SetGetMarket(t *testing.T) {
 	require.Equal(t, markets[0].MarketID, "tstusd")
 	require.Equal(t, markets[1].MarketID, "tst2usd")
 
-	_, found = keeper.GetMarket(ctx, "nan")
-	require.Equal(t, found, false)
+	_, err = keeper.GetMarket(ctx, "nan")
+	require.Equal(t, types.CodeInvalidAsset, err.Code())
 }
 
 // TestKeeper_GetSetPrice Test Posting the price by an oracle
