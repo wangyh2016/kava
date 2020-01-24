@@ -19,7 +19,7 @@ type Params struct {
 type GenesisState struct {
 	NextAuctionID uint64          `json:"next_auction_id" yaml:"next_auction_id"` // auctionID that will be used for the next created auction
 	Params        Params          `json:"auction_params" yaml:"auction_params"` // auction params
-	Auctions      Auctions `json:"genesis_auctions" yaml:"genesis_auctions"` // auctions currently in the store
+	Auctions      GenesisAuctions `json:"auctions" yaml:"auctions"` // auctions currently in the store
 }
 ```
 
