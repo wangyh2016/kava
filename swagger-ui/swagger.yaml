@@ -762,6 +762,20 @@ paths:
           description: Invalid request
         500:
           description: Internal server error
+  /auction/parameters:
+    get:
+      summary: Query auction parameters
+      produces:
+        - application/json
+      tags:
+        - Auction
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AuctionParameters'
+        500:
+          description: Internal Server Error
   /auction/auctions:
     get:
       summary: Query auctions
@@ -801,20 +815,6 @@ paths:
             $ref: '#/definitions/AuctionResponse'
         400:
           description: invalid auction id
-        500:
-          description: Internal Server Error
-  /auction/parameters:
-    get:
-      summary: Query auction parameters
-      produces:
-        - application/json
-      tags:
-        - Auction
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/AuctionParameters'
         500:
           description: Internal Server Error
   /pricefeed/postprice:
