@@ -28,12 +28,12 @@ func InitGenesis(ctx sdk.Context, k Keeper, supplyKeeper types.SupplyKeeper, gs 
 
 }
 
-// ExportGenesis export genesis state for cdp module
+// ExportGenesis export genesis state for kavadist module
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	params := k.GetParams(ctx)
 	previousBlockTime, found := k.GetPreviousBlockTime(ctx)
 	if !found {
 		previousBlockTime = DefaultPreviousBlockTime
 	}
-	return NewGenesisState(params,previousBlockTime)
+	return NewGenesisState(params, previousBlockTime)
 }
